@@ -1,33 +1,30 @@
 import 'package:flutter/material.dart';
+import 'package:jackie_notes/widgets/responsive_scaffold.dart';
 
 void main() {
   runApp(JackieApp());
 }
 
 class JackieApp extends StatelessWidget {
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Flutter Demo',
-      theme: ThemeData(
+      themeMode: ThemeMode.dark,
+      darkTheme: ThemeData(
         brightness: Brightness.dark,
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      home: HomePage(),
-    );
-  }
-}
-
-class HomePage extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text("Jackie Notes"),
+      theme: ThemeData(
+        primarySwatch: Colors.grey,
+        visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      body: Center(
-        child: Text("Welcome to Jackie!"),
+      home: SafeArea(
+        child: ResponsiveScaffold(
+          toolbar: Container(color: Colors.red, child: Text("Toolbar!")),
+          sidebar: Container(color: Colors.blue, child: Text("Sidebar!")),
+          main: Container(color: Colors.green, child: Text("Main Area!")),
+        ),
       ),
     );
   }
