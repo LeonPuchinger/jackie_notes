@@ -20,7 +20,10 @@ class ResponsiveScaffold extends StatelessWidget {
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            this.sidebar,
+            Container(
+              child: this.sidebar,
+              width: 280,
+            ),
             Expanded(
               child: buildMainArea(size),
             ),

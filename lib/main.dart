@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:jackie_notes/widgets/notelist.dart';
 import 'package:jackie_notes/widgets/responsive_scaffold.dart';
 
 void main() {
@@ -22,7 +23,7 @@ class JackieApp extends StatelessWidget {
       home: SafeArea(
         child: ResponsiveScaffold(
           toolbar: Container(color: Colors.red, child: Text("Toolbar!")),
-          sidebar: Container(color: Colors.blue, child: Text("Sidebar!")),
+          sidebar: NoteList(),
           main: Container(color: Colors.green, child: Text("Main Area!")),
         ),
       ),
