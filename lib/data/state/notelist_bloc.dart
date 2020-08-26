@@ -3,10 +3,12 @@ import 'dart:io' as io;
 
 import 'package:jackie_notes/data/note.dart';
 import 'package:jackie_notes/data/services/filesystem.dart';
+import 'package:jackie_notes/data/state/app_bloc.dart';
 import 'package:jackie_notes/data/state/bloc.dart';
 import 'package:rxdart/rxdart.dart';
 
 class NoteListBloc extends Bloc {
+  final AppBloc appBloc;
   final _dirStack = [Directory("Files", root, true)];
 
   final _entityController = BehaviorSubject<List<NoteEntity>>();
@@ -14,6 +16,8 @@ class NoteListBloc extends Bloc {
 
   Stream<List<NoteEntity>> get entities => _entityController.stream;
   Stream<Directory> get currentDirectory => _currentDirectory.stream;
+
+  NoteListBloc(this.appBloc);
 
   selectEntity(int index) async {
     final entity = _entityController.value[index];

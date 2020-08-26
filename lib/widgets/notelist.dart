@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:jackie_notes/data/note.dart';
-import 'package:jackie_notes/data/state/note_list_bloc.dart';
+import 'package:jackie_notes/data/state/notelist_bloc.dart';
+import 'package:provider/provider.dart';
 
 class NoteList extends StatefulWidget {
-  final bloc = NoteListBloc();
-
   @override
   _NoteListState createState() => _NoteListState();
 }
@@ -12,24 +11,26 @@ class NoteList extends StatefulWidget {
 class _NoteListState extends State<NoteList> {
   @override
   Widget build(BuildContext context) {
+    final bloc = Provider.of<NoteListBloc>(context);
+
     return Column(
       children: [
         StreamBuilder(
-          stream: widget.bloc.currentDirectory,
+          stream: bloc.currentDirectory,
           initialData: Directory("Files", "", true),
           builder: (_, snapshot) {
             return AppBar(
               title: Text(snapshot.data.name),
               leading: IconButton(
                 icon: Icon(Icons.arrow_back),
-                onPressed: snapshot.data.isRoot ? null : widget.bloc.moveToParent,
+                onPressed: snapshot.data.isRoot ? null : bloc.moveToParent,
               ),
             );
           },
         ),
         Expanded(
           child: StreamBuilder<List<NoteEntity>>(
-            stream: widget.bloc.entities,
+            stream: bloc.entities,
             initialData: [],
             builder: (_, snapshot) {
               return ListView.builder(
@@ -37,7 +38,7 @@ class _NoteListState extends State<NoteList> {
                 itemBuilder: (_, index) {
                   return ListItem(
                     name: snapshot.data[index].name,
-                    onTap: () => widget.bloc.selectEntity(index),
+                    onTap: () => bloc.selectEntity(index),
                     directory: snapshot.data[index] is Directory,
                   );
                 },
