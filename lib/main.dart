@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:jackie_notes/data/state/app_bloc.dart';
 import 'package:jackie_notes/data/state/document_bloc.dart';
 import 'package:jackie_notes/data/state/notelist_bloc.dart';
-import 'package:jackie_notes/widgets/document.dart';
+import 'package:jackie_notes/widgets/document_viewer.dart';
 import 'package:jackie_notes/widgets/notelist.dart';
 import 'package:jackie_notes/widgets/responsive_scaffold.dart';
 import 'package:provider/provider.dart';
@@ -53,7 +53,7 @@ class _JackieAppState extends State<JackieApp> {
           child: ResponsiveScaffold(
             toolbar: Container(color: Colors.red, child: Text("Toolbar!")),
             sidebar: NoteList(),
-            main: Document(),
+            main: DocumentViewer(),
           ),
         ),
       ),

@@ -25,8 +25,9 @@ class NoteListBloc extends Bloc {
       _entityController.add(await listDirectory(io.Directory(entity.path)));
       _dirStack.add(entity);
       _currentDirectory.add(entity);
+    } else {
+      appBloc.addEdit(entity);
     }
-    //TODO: open file for editing
   }
 
   moveToParent() async {
