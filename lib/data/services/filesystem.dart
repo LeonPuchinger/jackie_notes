@@ -3,20 +3,22 @@ import 'dart:io' as io;
 
 import 'package:jackie_notes/data/document.dart';
 import 'package:jackie_notes/data/note.dart';
+import 'package:path_provider/path_provider.dart';
 
-const root = String.fromEnvironment("jackie_root_path");
+Future<io.Directory> get documentsDir async => getApplicationDocumentsDirectory();
 
 Future<List<NoteEntity>> listDirectory(io.Directory dir) async {
-  final entities = dir.listSync(recursive: false, followLinks: false);
-  return entities.map((e) {
+  final List<NoteEntity> entities = [];
+  for(final e in dir.listSync(recursive: false, followLinks: false)) {
     final type = e.toString().split(":")[0];
     if (type == "File") {
-      return Note(e.path.split("/").last, e.path);
+      entities.add(Note(e.path.split("/").last, e.path));
     }
     if (type == "Directory") {
-      return Directory(e.path.split("/").last, e.path);
+      entities.add(Directory(e.path.split("/").last, e.path));
     }
-  }).toList();
+  }
+  return entities;
 }
 
 //mock file with a path displaying "J" for testing
