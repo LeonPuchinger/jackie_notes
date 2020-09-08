@@ -24,7 +24,8 @@ Future<List<NoteEntity>> listDirectory(io.Directory dir) async {
 //mock file with a path displaying "J" for testing
 readMockFile() {
   final doc = Document();
-  doc.pages.add(Page()
+  doc.pages.add(Page());
+  /* doc.pages.add(Page()
     ..elements.add(Path(
       [
         Coord(50, 0),
@@ -34,6 +35,6 @@ readMockFile() {
         Coord(60, 0),
       ],
       Coord(10, 10),
-    )));
+    ))); */
   return doc;
 }

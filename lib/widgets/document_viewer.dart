@@ -16,7 +16,10 @@ class _DocumentViewerState extends State<DocumentViewer> {
     final _appBloc = Provider.of<AppBloc>(context);
     final bloc = DocumentBloc(_appBloc);
 
-    return StreamBuilder<Document>(
+    return GestureDetector(
+      onPanStart: (details) => bloc.panStart(details.localPosition.dx, details.localPosition.dy),
+      onPanUpdate: (details) => bloc.panUpdate(details.delta.dx, details.delta.dy),
+      child: StreamBuilder<Document>(
         stream: bloc.document,
         initialData: Document(),
         builder: (context, snapshot) {
@@ -24,7 +27,9 @@ class _DocumentViewerState extends State<DocumentViewer> {
             size: Size.infinite,
             painter: DocumentPainter(snapshot.data),
           );
-        });
+        },
+      ),
+    );
   }
 }
 
@@ -37,6 +42,7 @@ class DocumentPainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
       ..color = Colors.red
+      ..strokeWidth = 2
       ..style = PaintingStyle.stroke;
     for (final p in document.pages) {
       for (final r in p.elements) {

@@ -5,13 +5,25 @@ import 'package:jackie_notes/data/services/filesystem.dart';
 import 'package:rxdart/subjects.dart';
 
 class DocumentBloc extends Bloc {
-  final AppBloc appBloc;
+  final AppBloc _appBloc;
+  Document _document;
+  RenderElement _current;
 
   final _documentController = BehaviorSubject<Document>();
 
   Stream<Document> get document => _documentController.stream;
 
-  DocumentBloc(this.appBloc);
+  DocumentBloc(this._appBloc);
+
+  panStart(double x, double y) {
+    _current = new Path([], Coord(x, y));
+    _document.pages[0].elements.add(_current);
+  }
+  
+  panUpdate(double x, double y) {
+    (_current as Path).points.add(Coord(x, y));
+    _documentController.add(_document);
+  }
 
   @override
   void dispose() {
@@ -21,9 +33,9 @@ class DocumentBloc extends Bloc {
   @override
   void init() {
     //TODO: find better way for appbloc to tell document_bloc which note to use (esp. for multiple document_blocs)
-    appBloc.edit.listen((note) async {
-      final doc = readMockFile();
-      _documentController.add(doc);
+    _appBloc.edit.listen((note) async {
+      _document = readMockFile();
+      _documentController.add(_document);
     });
   }
 }
