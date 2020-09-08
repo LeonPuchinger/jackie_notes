@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:jackie_notes/data/document.dart';
+import 'package:jackie_notes/data/state/app_bloc.dart';
 import 'package:jackie_notes/data/state/document_bloc.dart';
 import 'package:provider/provider.dart';
 import 'dart:ui' as ui;
@@ -12,7 +13,8 @@ class DocumentViewer extends StatefulWidget {
 class _DocumentViewerState extends State<DocumentViewer> {
   @override
   Widget build(BuildContext context) {
-    final bloc = Provider.of<DocumentBloc>(context);
+    final _appBloc = Provider.of<AppBloc>(context);
+    final bloc = DocumentBloc(_appBloc);
 
     return StreamBuilder<Document>(
         stream: bloc.document,

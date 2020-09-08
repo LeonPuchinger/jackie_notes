@@ -1,10 +1,9 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' hide TabBar;
 import 'package:jackie_notes/data/state/app_bloc.dart';
-import 'package:jackie_notes/data/state/document_bloc.dart';
-import 'package:jackie_notes/data/state/notelist_bloc.dart';
 import 'package:jackie_notes/widgets/document_viewer.dart';
 import 'package:jackie_notes/widgets/notelist.dart';
 import 'package:jackie_notes/widgets/responsive_scaffold.dart';
+import 'package:jackie_notes/widgets/tabbar.dart';
 import 'package:provider/provider.dart';
 
 void main() {
@@ -27,33 +26,31 @@ class _JackieAppState extends State<JackieApp> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      themeMode: ThemeMode.dark,
-      darkTheme: ThemeData(
-        brightness: Brightness.dark,
-        visualDensity: VisualDensity.adaptivePlatformDensity,
-      ),
-      theme: ThemeData(
-        primarySwatch: Colors.grey,
-        visualDensity: VisualDensity.adaptivePlatformDensity,
-      ),
-      home: SafeArea(
-        child: MultiProvider(
-          providers: [
-            Provider<NoteListBloc>(
-              create: (_) => NoteListBloc(appBloc),
-              dispose: (_, bloc) => bloc.dispose(),
-            ),
-            Provider<DocumentBloc>(
-              create: (_) => DocumentBloc(appBloc),
-              dispose: (_, bloc) => bloc.dispose(),
-            ),
-          ],
+    return Provider<AppBloc>.value(
+      value: appBloc,
+      child: MaterialApp(
+        themeMode: ThemeMode.dark,
+        darkTheme: ThemeData(
+          brightness: Brightness.dark,
+          visualDensity: VisualDensity.adaptivePlatformDensity,
+        ),
+        theme: ThemeData(
+          primarySwatch: Colors.grey,
+          visualDensity: VisualDensity.adaptivePlatformDensity,
+        ),
+        home: SafeArea(
           child: ResponsiveScaffold(
-            toolbar: Container(color: Colors.red, child: Text("Toolbar!")),
+            toolbar: TabBar(),
             sidebar: NoteList(),
-            main: DocumentViewer(),
+            main: StreamBuilder(
+              stream: appBloc.edit,
+              builder: (_, snapshot) {
+                if (snapshot.hasData) {
+                  return DocumentViewer();
+                } else
+                  return Center(child: Text("No Documents opened"));
+              },
+            ),
           ),
         ),
       ),

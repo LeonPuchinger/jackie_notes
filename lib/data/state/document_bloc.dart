@@ -20,6 +20,7 @@ class DocumentBloc extends Bloc {
 
   @override
   void init() {
+    //TODO: find better way for appbloc to tell document_bloc which note to use (esp. for multiple document_blocs)
     appBloc.edit.listen((note) async {
       final doc = readMockFile();
       _documentController.add(doc);

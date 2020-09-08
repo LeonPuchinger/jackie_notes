@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:jackie_notes/data/note.dart';
+import 'package:jackie_notes/data/state/app_bloc.dart';
 import 'package:jackie_notes/data/state/notelist_bloc.dart';
+import 'package:jackie_notes/widgets/document_viewer.dart';
 import 'package:provider/provider.dart';
 
 class NoteList extends StatefulWidget {
@@ -11,7 +13,8 @@ class NoteList extends StatefulWidget {
 class _NoteListState extends State<NoteList> {
   @override
   Widget build(BuildContext context) {
-    final bloc = Provider.of<NoteListBloc>(context);
+    final _appBloc = Provider.of<AppBloc>(context);
+    final bloc = NoteListBloc(_appBloc);
 
     return Column(
       children: [
