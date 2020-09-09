@@ -21,6 +21,26 @@ Future<List<NoteEntity>> listDirectory(io.Directory dir) async {
   return entities;
 }
 
+writeJvg(Document document, io.File file) async {
+  final buffer = StringBuffer();
+  buffer.writeln("<jvg>");
+  for(final page in document.pages) {
+    buffer.writeln("<page>");
+    for(final element in page.elements) {
+      switch (element.type) {
+        case RenderType.path:
+          buffer.writeln("<path>");
+          buffer.writeAll((element as Path).points, " ");
+          buffer.writeln("</path>");
+        break;
+      }
+    }
+    buffer.writeln("</page>");
+  }
+  buffer.writeln("</jvg>");
+  file.writeAsString(buffer.toString());
+}
+
 //mock file with a path displaying "J" for testing
 readMockFile() {
   final doc = Document();

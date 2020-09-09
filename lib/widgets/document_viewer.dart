@@ -25,6 +25,7 @@ class _DocumentViewerState extends State<DocumentViewer> {
         builder: (context, snapshot) {
           return CustomPaint(
             size: Size.infinite,
+            isComplex: true,
             painter: DocumentPainter(snapshot.data),
           );
         },

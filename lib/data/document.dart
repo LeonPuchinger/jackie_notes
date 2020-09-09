@@ -28,4 +28,7 @@ class Coord {
   final double x, y;
 
   Coord(this.x, this.y);
+
+  @override
+  String toString() => "$x $y";
 }
