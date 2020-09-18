@@ -25,25 +25,29 @@ Future<List<NoteEntity>> listDirectory(io.Directory dir) async {
 }
 
 writeJvg(Document document, io.File file) async {
-  final buffer = StringBuffer();
-  buffer.writeln("<jvg>");
-  for (final page in document.pages) {
-    buffer.writeln("<page>");
-    for (final element in page.elements) {
-      switch (element.type) {
-        case RenderType.path:
-          buffer.write('<path offset="');
-          buffer.write(element.offset);
-          buffer.writeln('">');
-          buffer.writeAll((element as Path).points, " ");
-          buffer.writeln("</path>");
-          break;
-      }
-    }
-    buffer.writeln("</page>");
+  buildPath(XmlBuilder builder, Path path) {
+    builder.element("path", attributes: {
+      "offset": "${path.offset}",
+    }, nest: () {
+      builder.text(path.contents);
+    });
   }
-  buffer.writeln("</jvg>");
-  file.writeAsString(buffer.toString());
+
+  final builder = XmlBuilder();
+  builder.element("jvg", nest: () {
+    for (final page in document.pages) {
+      builder.element("page", nest: () {
+        for (final element in page.elements) {
+          switch (element.type) {
+            case RenderType.path:
+              buildPath(builder, element);
+              continue;
+          }
+        }
+      });
+    }
+  });
+  file.writeAsString(builder.buildDocument().toString());
 }
 
 Future<Document> readJvg(io.File file) async {

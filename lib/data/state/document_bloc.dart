@@ -41,6 +41,6 @@ class DocumentBloc extends Bloc {
       _document = await readJvg(_file);
       _documentController.add(_document);
     });
-    document.debounceTime(Duration(seconds: 2)).listen((document) => writeJvg(document, _file));
+    document.debounceTime(Duration(seconds: 1)).listen((document) => writeJvg(document, _file));
   }
 }
