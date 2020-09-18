@@ -38,7 +38,7 @@ class DocumentBloc extends Bloc {
     //TODO: find better way for appbloc to tell document_bloc which note to use (esp. for multiple document_blocs)
     _appBloc.edit.listen((note) async {
       _file = File(note.path);
-      _document = readMockFile();
+      _document = await readJvg(_file);
       _documentController.add(_document);
     });
     document.debounceTime(Duration(seconds: 2)).listen((document) => writeJvg(document, _file));
