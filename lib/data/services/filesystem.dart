@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io' as io;
 
+import 'package:flutter/rendering.dart' show Color;
 import 'package:jackie_notes/data/document.dart';
 import 'package:jackie_notes/data/note.dart';
 import 'package:jackie_notes/data/services/parser.dart';
@@ -28,6 +29,7 @@ writeJvg(Document document, io.File file) async {
   buildPath(XmlBuilder builder, Path path) {
     builder.element("path", attributes: {
       "offset": "${path.offset}",
+      "color": "0x${path.color.value.toRadixString(16).padLeft(8, '0')}"
     }, nest: () {
       builder.text(path.contents);
     });
@@ -61,6 +63,15 @@ Future<Document> readJvg(io.File file) async {
       return Coord(0, 0);
     }
 
+    readColor() {
+      final color = xml.getAttribute("color");
+      if (color != null) {
+        final result = hex32.parse(SpanScanner(color));
+        if (result.successful) return Color(result.value);
+      }
+      return Color(0xffaaaaaa);
+    }
+
     readPoints() {
       final points = xml.innerText.replaceAll("\n", "");
       if (points != null) {
@@ -73,7 +84,8 @@ Future<Document> readJvg(io.File file) async {
     final points = readPoints();
     if (points == null) return null;
     final offset = readOffset();
-    return Path(points, offset);
+    final color = readColor();
+    return Path(points, color, offset);
   }
 
   final xml = XmlDocument.parse(file.readAsStringSync());

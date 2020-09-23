@@ -16,20 +16,30 @@ class _DocumentViewerState extends State<DocumentViewer> {
     final _appBloc = Provider.of<AppBloc>(context);
     final bloc = DocumentBloc(_appBloc);
 
-    return GestureDetector(
-      onPanStart: (details) => bloc.panStart(details.localPosition.dx, details.localPosition.dy),
-      onPanUpdate: (details) => bloc.panUpdate(details.delta.dx, details.delta.dy),
-      child: StreamBuilder<Document>(
-        stream: bloc.document,
-        initialData: Document(),
-        builder: (context, snapshot) {
-          return CustomPaint(
-            size: Size.infinite,
-            isComplex: true,
-            painter: DocumentPainter(snapshot.data),
-          );
-        },
-      ),
+    return StreamBuilder(
+      stream: _appBloc.tool,
+      builder: (_, snapshot) {
+        return AbsorbPointer(
+          absorbing: snapshot.data == null,
+          child: GestureDetector(
+            onPanStart: (details) => bloc.panStart(
+                details.localPosition.dx, details.localPosition.dy),
+            onPanUpdate: (details) =>
+                bloc.panUpdate(details.delta.dx, details.delta.dy),
+            child: StreamBuilder<Document>(
+              stream: bloc.document,
+              initialData: Document(),
+              builder: (context, snapshot) {
+                return CustomPaint(
+                  size: Size.infinite,
+                  isComplex: true,
+                  painter: DocumentPainter(snapshot.data),
+                );
+              },
+            ),
+          ),
+        );
+      },
     );
   }
 }
@@ -42,13 +52,13 @@ class DocumentPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
-      ..color = Colors.red
       ..strokeWidth = 2
       ..style = PaintingStyle.stroke;
     for (final p in document.pages) {
       for (final r in p.elements) {
         switch (r.type) {
           case RenderType.path:
+            paint.color = (r as Path).color;
             final path = ui.Path();
             path.moveTo(r.offset.x, r.offset.y);
             for (final c in (r as Path).points) {

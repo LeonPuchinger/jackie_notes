@@ -12,3 +12,8 @@ final coord = chain([
 ]).map<Coord>((r) => Coord(r.value[0], r.value[2]));
 
 final coords = coord.separatedBy(match(" ").space());
+
+final hex32 = chain([
+  match(RegExp("0[Xx]")),
+  match(RegExp("[0-9a-fA-F]{8}")).map<String>((r) => r.span.text),
+]).map<int>((r) => int.parse(r.value[1], radix: 16));

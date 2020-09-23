@@ -1,3 +1,5 @@
+import 'package:flutter/rendering.dart' show Color;
+
 class Document {
   final List<Page> pages = [];
 }
@@ -20,8 +22,9 @@ abstract class RenderElement {
 
 class Path extends RenderElement {
   final List<Coord> points;
+  final Color color;
 
-  Path(this.points, Coord offset) : super(offset);
+  Path(this.points, this.color, Coord offset) : super(offset);
 
   RenderType get type => RenderType.path;
 
