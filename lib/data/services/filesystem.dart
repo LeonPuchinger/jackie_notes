@@ -16,7 +16,10 @@ Future<List<NoteEntity>> listDirectory(io.Directory dir) async {
   for (final e in dir.listSync(recursive: false, followLinks: false)) {
     final type = e.toString().split(":")[0];
     if (type == "File") {
-      entities.add(Note(e.path.split("/").last, e.path));
+      final name = e.path.split("/").last.split(".");
+      if (name.length == 2 && name.last == "jvg") {
+        entities.add(Note(name.first, e.path));
+      }
     }
     if (type == "Directory") {
       entities.add(Directory(e.path.split("/").last, e.path));

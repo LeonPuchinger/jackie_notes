@@ -43,6 +43,9 @@ class _NoteListState extends State<NoteList> {
             stream: bloc.entities,
             initialData: [],
             builder: (_, snapshot) {
+              if (snapshot.data.isEmpty) {
+                return Center(child: Text("No Files"));
+              }
               return ListView.builder(
                 itemCount: snapshot.data.length,
                 itemBuilder: (_, index) {
