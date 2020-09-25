@@ -11,10 +11,18 @@ class DocumentViewer extends StatefulWidget {
 }
 
 class _DocumentViewerState extends State<DocumentViewer> {
+  DocumentBloc bloc;
+
+  @override
+  void dispose() {
+    bloc?.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     final _appBloc = Provider.of<AppBloc>(context);
-    final bloc = DocumentBloc(_appBloc);
+    bloc ??= DocumentBloc(_appBloc);
 
     return StreamBuilder(
       stream: _appBloc.tool,

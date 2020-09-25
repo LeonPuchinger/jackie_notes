@@ -11,6 +11,8 @@ class Toolbar extends StatefulWidget {
 }
 
 class _ToolbarState extends State<Toolbar> {
+  ToolbarBloc bloc;
+
   List<bool> isSelected(int selection, int length) {
     final selected = List.filled(length + 1, false);
     if (selection != null) selected[selection] = true;
@@ -18,16 +20,22 @@ class _ToolbarState extends State<Toolbar> {
   }
 
   @override
+  void dispose() {
+    bloc?.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final _appBloc = context.watch<AppBloc>();
-    final _bloc = ToolbarBloc(_appBloc);
+    bloc ??= ToolbarBloc(_appBloc);
 
     return AppBar(
       title: Row(
         children: [
           DualStreamBuilder<List<Pen>, int>(
-            streamA: _bloc.pens,
-            streamB: _bloc.selection,
+            streamA: bloc.pens,
+            streamB: bloc.selection,
             initialDataA: [],
             builder: (_, snapshotA, snapshotB) {
               return ToggleButtons(
@@ -37,7 +45,7 @@ class _ToolbarState extends State<Toolbar> {
                     Icon(Icons.create, color: pen.color)
                 ],
                 renderBorder: false,
-                onPressed: _bloc.selectPen,
+                onPressed: bloc.selectPen,
                 isSelected: isSelected(snapshotB.data, snapshotA.data.length),
               );
             },
