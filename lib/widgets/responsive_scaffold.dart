@@ -21,6 +21,11 @@ class ResponsiveScaffold extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Container(
+              decoration: BoxDecoration(
+                border: Border(
+                    right: BorderSide(
+                        width: 1, color: Theme.of(context).dividerColor)),
+              ),
               child: this.sidebar,
               width: 280,
             ),

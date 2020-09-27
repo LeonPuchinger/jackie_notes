@@ -28,6 +28,12 @@ Future<List<NoteEntity>> listDirectory(io.Directory dir) async {
   return entities;
 }
 
+createJvg(String path) async {
+  final document = Document()..pages.add(Page());
+  final file = io.File("$path/New File.jvg")..createSync(recursive: false);
+  await writeJvg(document, file);
+}
+
 writeJvg(Document document, io.File file) async {
   buildPath(XmlBuilder builder, Path path) {
     builder.element("path", attributes: {

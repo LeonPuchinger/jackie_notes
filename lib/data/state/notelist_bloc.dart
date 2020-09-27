@@ -9,7 +9,7 @@ import 'package:rxdart/rxdart.dart';
 
 class NoteListBloc extends Bloc {
   final AppBloc appBloc;
-  final _dirStack = [];
+  final _dirStack = <Directory>[];
 
   final _entityController = BehaviorSubject<List<NoteEntity>>();
   final _currentDirectory = BehaviorSubject<Directory>();
@@ -30,11 +30,22 @@ class NoteListBloc extends Bloc {
     }
   }
 
+  _refreshCurrentDir() async {
+    final current = io.Directory(_dirStack.last.path);
+    _entityController.add(await listDirectory(current));
+  }
+
   moveToParent() async {
     _dirStack.removeLast();
     final parent = _dirStack.last;
     _currentDirectory.add(parent);
     _entityController.add(await listDirectory(io.Directory(parent.path)));
+  }
+
+  createFile() async {
+    final path = _dirStack.last.path;
+    await createJvg(path);
+    _refreshCurrentDir();
   }
 
   @override

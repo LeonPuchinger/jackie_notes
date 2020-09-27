@@ -59,6 +59,21 @@ class _NoteListState extends State<NoteList> {
             },
           ),
         ),
+        Container(
+          decoration: BoxDecoration(
+            border: Border(
+              top: BorderSide(
+                width: 1,
+                color: Theme.of(context).dividerColor,
+              ),
+            ),
+          ),
+          child: ListTile(
+            onTap: bloc.createFile,
+            leading: Icon(Icons.add),
+            title: Text("Add File"),
+          ),
+        ),
       ],
     );
   }
