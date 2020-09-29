@@ -7,6 +7,7 @@ import 'package:jackie_notes/data/note.dart';
 import 'package:jackie_notes/data/services/parser.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:xml/xml.dart';
+import 'package:jackie_notes/util/color_to_hex.dart';
 
 Future<io.Directory> get documentsDir async =>
     getApplicationDocumentsDirectory();
@@ -38,9 +39,20 @@ writeJvg(Document document, io.File file) async {
   buildPath(XmlBuilder builder, Path path) {
     builder.element("path", attributes: {
       "offset": "${path.offset}",
-      "color": "0x${path.color.value.toRadixString(16).padLeft(8, '0')}"
+      "color": "0x${path.color.hexString}"
     }, nest: () {
       builder.text(path.contents);
+    });
+  }
+
+  buildText(XmlBuilder builder, Text text) {
+    builder.element("text", attributes: {
+      "color": "0x${text.color.hexString}",
+      "font-size": "${text.fontSize}",
+      "width": "${text.width}",
+      "offset": "${text.offset}",
+    }, nest: () {
+      builder.text(text.text);
     });
   }
 
@@ -54,13 +66,14 @@ writeJvg(Document document, io.File file) async {
               buildPath(builder, element);
               continue;
             case RenderType.text:
+              buildText(builder, element);
               continue;
           }
         }
       });
     }
   });
-  file.writeAsString(builder.buildDocument().toString());
+  file.writeAsString(builder.buildDocument().toXmlString(pretty: true));
 }
 
 Future<Document> readJvg(io.File file) async {
