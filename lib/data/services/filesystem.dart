@@ -53,6 +53,8 @@ writeJvg(Document document, io.File file) async {
             case RenderType.path:
               buildPath(builder, element);
               continue;
+            case RenderType.text:
+              continue;
           }
         }
       });
@@ -62,25 +64,25 @@ writeJvg(Document document, io.File file) async {
 }
 
 Future<Document> readJvg(io.File file) async {
+  readColor(XmlElement xml) {
+    final color = xml.getAttribute("color");
+    if (color != null) {
+      final result = hex32.parse(SpanScanner(color));
+      if (result.successful) return Color(result.value);
+    }
+    return Color(0xffaaaaaa);
+  }
+
+  readOffset(XmlElement xml) {
+    final offset = xml.getAttribute("offset");
+    if (offset != null) {
+      final result = coord.parse(SpanScanner(offset));
+      if (result.successful) return result.value;
+    }
+    return Coord(0, 0);
+  }
+
   readPath(XmlElement xml) {
-    readOffset() {
-      final offset = xml.getAttribute("offset");
-      if (offset != null) {
-        final result = coord.parse(SpanScanner(offset));
-        if (result.successful) return result.value;
-      }
-      return Coord(0, 0);
-    }
-
-    readColor() {
-      final color = xml.getAttribute("color");
-      if (color != null) {
-        final result = hex32.parse(SpanScanner(color));
-        if (result.successful) return Color(result.value);
-      }
-      return Color(0xffaaaaaa);
-    }
-
     readPoints() {
       final points = xml.innerText.replaceAll("\n", "");
       if (points != null) {
@@ -92,9 +94,43 @@ Future<Document> readJvg(io.File file) async {
 
     final points = readPoints();
     if (points == null) return null;
-    final offset = readOffset();
-    final color = readColor();
+    final offset = readOffset(xml);
+    final color = readColor(xml);
     return Path(points, color, offset);
+  }
+
+  readText(XmlElement xml) {
+    readWidth() {
+      final width = xml.getAttribute("width");
+      if (width != null) {
+        final result = double.tryParse(width);
+        if (result != null) return result;
+      }
+      return 100.0;
+    }
+
+    readFontSize() {
+      final size = xml.getAttribute("font-size");
+      if (size != null) {
+        final result = double.tryParse(size);
+        if (result != null) return result;
+      }
+      return 12.0;
+    }
+
+    readText() {
+      final text = xml.innerText;
+      if (text == null || text.length == 0) return null;
+      return text;
+    }
+
+    final text = readText();
+    if (text == null) return null;
+    final color = readColor(xml);
+    final size = readFontSize();
+    final width = readWidth();
+    final offset = readOffset(xml);
+    return Text(text, color, size, width, offset);
   }
 
   final xml = XmlDocument.parse(file.readAsStringSync());
@@ -108,6 +144,10 @@ Future<Document> readJvg(io.File file) async {
             case "path":
               final path = readPath(xmlElement);
               if (path != null) page.elements.add(path);
+              break;
+            case "text":
+              final text = readText(xmlElement);
+              if (text != null) page.elements.add(text);
               break;
           }
         }
