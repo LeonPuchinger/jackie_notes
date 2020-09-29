@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' hide Text;
 import 'package:jackie_notes/data/document.dart';
 import 'package:jackie_notes/data/state/app_bloc.dart';
 import 'package:jackie_notes/data/state/document_bloc.dart';
@@ -57,22 +57,45 @@ class DocumentPainter extends CustomPainter {
 
   DocumentPainter(this.document);
 
-  @override
-  void paint(Canvas canvas, Size size) {
+  paintPath(Path element, Canvas canvas) {
     final paint = Paint()
       ..strokeWidth = 2
       ..style = PaintingStyle.stroke;
+    paint.color = element.color;
+    final path = ui.Path();
+    path.moveTo(element.offset.x, element.offset.y);
+    for (final c in element.points) {
+      path.relativeLineTo(c.x, c.y);
+    }
+    canvas.drawPath(path, paint);
+  }
+
+  paintText(Text element, Canvas canvas) {
+    final span = TextSpan(
+      text: element.text,
+      style: TextStyle(
+        color: element.color,
+        fontSize: element.fontSize,
+      ),
+    );
+    final painter = TextPainter(
+      text: span,
+      textDirection: TextDirection.ltr,
+    );
+    painter.layout(minWidth: 0, maxWidth: element.width);
+    painter.paint(canvas, ui.Offset(element.offset.x, element.offset.y));
+  }
+
+  @override
+  void paint(Canvas canvas, Size size) {
     for (final p in document.pages) {
       for (final r in p.elements) {
         switch (r.type) {
           case RenderType.path:
-            paint.color = (r as Path).color;
-            final path = ui.Path();
-            path.moveTo(r.offset.x, r.offset.y);
-            for (final c in (r as Path).points) {
-              path.relativeLineTo(c.x, c.y);
-            }
-            canvas.drawPath(path, paint);
+            paintPath(r, canvas);
+            break;
+          case RenderType.text:
+            paintText(r, canvas);
             break;
         }
       }

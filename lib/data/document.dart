@@ -8,7 +8,7 @@ class Page {
   final List<RenderElement> elements = [];
 }
 
-enum RenderType { path }
+enum RenderType { path, text }
 
 abstract class RenderElement {
   final Coord offset;
@@ -16,8 +16,6 @@ abstract class RenderElement {
   RenderElement(this.offset);
 
   RenderType get type;
-
-  String get contents;
 }
 
 class Path extends RenderElement {
@@ -32,6 +30,22 @@ class Path extends RenderElement {
     final buffer = StringBuffer()..writeAll(points, " ");
     return buffer.toString();
   }
+}
+
+class Text extends RenderElement {
+  final String text;
+  final Color color;
+  final double fontSize, width;
+
+  Text(
+    this.text,
+    this.color,
+    this.fontSize,
+    this.width,
+    Coord offset,
+  ) : super(offset);
+
+  RenderType get type => RenderType.text;
 }
 
 class Coord {
