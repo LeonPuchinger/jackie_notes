@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg version="1.1" viewBox="0 0 16.161 25.831" xmlns="http://www.w3.org/2000/svg" xmlns:cc="http://creativecommons.org/ns#" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:xlink="http://www.w3.org/1999/xlink">
+<defs>
+<linearGradient id="a">
+<stop stop-color="#424242" offset="0"/>
+<stop offset="1"/>
+</linearGradient>
+<radialGradient id="c" cx="3.2823" cy="-3.4209" r="7.75" gradientTransform="matrix(.67689 -.0027451 .0090064 2.2208 23.392 29.037)" gradientUnits="userSpaceOnUse" xlink:href="#a"/>
+<radialGradient id="b" cx="-40.209" cy="-3.5164" r="7.8823" gradientTransform="matrix(.80823 .0035638 -.013323 3.0214 -34.685 14)" gradientUnits="userSpaceOnUse" xlink:href="#a"/>
+</defs>
+<g transform="translate(48.289 17.266)">
+<path d="m-74.485-16.064v7.5l15.5-3e-7 -6e-6 -7.5z" fill="#b5743c"/>
+<path d="m-70.577 20.173c0.05708 1.857-0.39028 5.4846 2 5.5h10.5c2.0246-0.06008 2.0024-2.3624 2-5.5" fill="#b66"/>
+<path d="m-74.886-3.0178h15.5l-6e-6 12.5h-15.5z" fill="url(#b)"/>
+<path d="m-26.025-17.139v7.5l4.5 12.5h6.5l4.5-12.5v-7.5" fill="none" stroke="#000" stroke-width=".66146"/>
+<path d="m-26.025-9.6392h15.5" fill="none" stroke="#000" stroke-width=".66146"/>
+<path d="m-13.831 21.448" fill="none" stroke="#000" stroke-width="2.6458px"/>
+<path d="m-20.775 2.8608c2.5 12 5 0 5 0z" fill="none" stroke="#000" stroke-width=".66146"/>
+<path d="m16.308-17.139v7.5h15.5v-7.5z" fill="#ff0"/>
+<path d="m21.558 2.8608c2.5 10 5 0 5 0z" fill="#ff0"/>
+<path d="m16.308-9.6392 4.5 12.5h6.5l4.5-12.5z"/>
+<path d="m16.308-17.139v7.5l4.5 12.5h6.5l4.5-12.5v-7.5z" fill="none" stroke="#cacaca"/>
+<path d="m16.308-9.6392h15.5" fill="none" stroke="#cacaca"/>
+<path d="m21.558 2.8608c2.5 10 5 0 5 0z" fill="none" stroke="#cacaca" stroke-width=".72188"/>
+<path d="m17.833 15.181 4.5 12.5h6.5l4.5-12.5z" fill="url(#c)"/>
+<path d="m-4.4677-17.171v7.5h15.5v-7.5z" fill="#ff0"/>
+<path d="m-4.4677-17.171v7.5l4.5 12.5h6.5l4.5-12.5v-7.5z" fill="none" stroke="#cacaca" stroke-width=".4"/>
+<path d="m-4.4677-9.6709h15.5" fill="none" stroke="#cacaca" stroke-width=".4"/>
+<path d="m-11.609 17.082c2.5 12 5 0 5 0z"/>
+<path d="m-1.929 16.501v7.5h15.5v-7.5z"/>
+<path d="m-47.959-17.266v20h15.5v-20" fill="none" stroke="#000" stroke-width=".66146"/>
+<path d="m-47.959-9.7664h15.5" fill="none" stroke="#000" stroke-width=".66146"/>
+<path d="m0.78226 2.8291c2.5 12 5 0 5 0z" fill="none" stroke="#000" stroke-width=".66146"/>
+<path d="m0.78226 2.8291c2.5 12 5 0 5 0z" fill="#ff0"/>
+<path d="m-47.459 2.7336c0.05708 1.857-0.39028 5.4846 2 5.5h10.5c2.0246-0.060082 2.0024-2.3624 2-5.5" fill="none" stroke="#000" stroke-width=".66146"/>
+</g>
+</svg>

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:jackie_notes/data/state/app_bloc.dart';
 import 'package:jackie_notes/data/state/toolbar_bloc.dart';
 import 'package:jackie_notes/data/tool.dart';
@@ -40,9 +41,8 @@ class _ToolbarState extends State<Toolbar> {
             builder: (_, snapshotA, snapshotB) {
               return ToggleButtons(
                 children: [
-                  Icon(Icons.remove_circle_outline),
-                  for (final pen in snapshotA.data)
-                    Icon(Icons.create, color: pen.color)
+                  Eraser(),
+                  for (final pen in snapshotA.data) Pencil(pen.color)
                 ],
                 renderBorder: false,
                 onPressed: bloc.selectPen,
@@ -56,16 +56,52 @@ class _ToolbarState extends State<Toolbar> {
   }
 }
 
-class Tool extends StatelessWidget {
+class Pencil extends StatelessWidget {
   final Color color;
+  final height = 35.0;
 
-  Tool(this.color);
+  Pencil(this.color);
 
   @override
   Widget build(BuildContext context) {
-    return IconButton(
-      icon: Icon(Icons.edit, color: color),
-      onPressed: () {},
+    return Stack(
+      children: [
+        SvgPicture.asset(
+          "assets/pen_inlay_0.svg",
+          height: height,
+          color: color,
+        ),
+        SvgPicture.asset(
+          "assets/pen_inlay_1.svg",
+          height: height,
+        ),
+        SvgPicture.asset(
+          "assets/pen_overlay.svg",
+          height: height,
+          color: Theme.of(context).dividerColor,
+        ),
+      ],
+    );
+  }
+}
+
+class Eraser extends StatelessWidget {
+  final height = 35.0;
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      children: [
+        SvgPicture.asset(
+          "assets/eraser_inlay.svg",
+          height: height,
+        ),
+        SvgPicture.asset(
+          "assets/eraser_overlay.svg",
+          color: Theme.of(context).dividerColor,
+          height: height,
+        ),
+      ],
     );
   }
 }

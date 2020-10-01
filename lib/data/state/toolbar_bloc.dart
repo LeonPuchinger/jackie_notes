@@ -32,9 +32,10 @@ class ToolbarBloc extends Bloc {
   @override
   void init() {
     _penController.add(<Pen>[
-      Pen(Color(0xfffc0303)),
-      Pen(Color(0xff0ce800)),
-      Pen(Color(0xff001df5)),
+      Pen(Color(0xffc7c7c7)),
+      Pen(Color(0xfff02252)),
+      Pen(Color(0xff73db63)),
+      Pen(Color(0xff4990d6)),
     ]);
   }
 }

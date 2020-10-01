@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg version="1.1" viewBox="0 0 16.161 25.654" xmlns="http://www.w3.org/2000/svg" xmlns:cc="http://creativecommons.org/ns#" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:xlink="http://www.w3.org/1999/xlink">
+<defs>
+<radialGradient id="a" cx="3.2823" cy="-3.4209" r="7.75" gradientTransform="matrix(.67689 -.0027451 .0090064 2.2208 1.0913 4.1853)" gradientUnits="userSpaceOnUse">
+<stop stop-color="#424242" offset="0"/>
+<stop offset="1"/>
+</radialGradient>
+</defs>
+<g transform="translate(26.356 17.139)">
+<path d="m-13.831 21.448" fill="none" stroke="#000" stroke-width="2.6458px"/>
+<path d="m16.308-17.139v7.5h15.5v-7.5z" fill="#ff0"/>
+<path d="m21.558 2.8608c2.5 10 5 0 5 0z" fill="#ff0"/>
+<path d="m16.308-9.6392 4.5 12.5h6.5l4.5-12.5z"/>
+<path d="m16.308-17.139v7.5l4.5 12.5h6.5l4.5-12.5v-7.5z" fill="none" stroke="#cacaca"/>
+<path d="m16.308-9.6392h15.5" fill="none" stroke="#cacaca"/>
+<path d="m21.558 2.8608c2.5 10 5 0 5 0z" fill="none" stroke="#cacaca" stroke-width=".72188"/>
+<path d="m-4.4677-9.6709 4.5 12.5h6.5l4.5-12.5z" fill="url(#a)"/>
+<path d="m-4.4677-17.171v7.5h15.5v-7.5z" fill="#ff0"/>
+<path d="m0.78226 2.8291c2.5 10 5 0 5 0z" fill="#ff0"/>
+<path d="m-4.4677-17.171v7.5l4.5 12.5h6.5l4.5-12.5v-7.5z" fill="none" stroke="#cacaca" stroke-width=".4"/>
+<path d="m-4.4677-9.6709h15.5" fill="none" stroke="#cacaca" stroke-width=".4"/>
+<path d="m0.78226 2.8291c2.5 10 5 0 5 0z" fill="none" stroke="#cacaca" stroke-width=".4"/>
+<path d="m-20.775 2.8608c2.5 12 5 0 5 0z"/>
+<path d="m-26.025-17.139v7.5h15.5v-7.5z"/>
+</g>
+</svg>
