@@ -32,8 +32,12 @@ class _DocumentViewerState extends State<DocumentViewer> {
           child: GestureDetector(
             onPanStart: (details) => bloc.panStart(
                 details.localPosition.dx, details.localPosition.dy),
-            onPanUpdate: (details) =>
-                bloc.panUpdate(details.delta.dx, details.delta.dy),
+            onPanUpdate: (details) => bloc.panUpdate(
+              details.localPosition.dx,
+              details.localPosition.dy,
+              details.delta.dx,
+              details.delta.dy,
+            ),
             child: StreamBuilder<Document>(
               stream: bloc.document,
               initialData: Document(),
@@ -83,7 +87,7 @@ class DocumentPainter extends CustomPainter {
       textDirection: TextDirection.ltr,
     );
     painter.layout(minWidth: 0, maxWidth: element.width);
-    painter.paint(canvas, ui.Offset(element.offset.x, element.offset.y));
+    painter.paint(canvas, ui.Offset(element.start.x, element.start.y));
   }
 
   @override

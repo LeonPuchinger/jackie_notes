@@ -11,18 +11,25 @@ class Page {
 enum RenderType { path, text }
 
 abstract class RenderElement {
-  final Coord offset;
+  final Coord start, end;
 
-  RenderElement(this.offset);
+  RenderElement(this.start, this.end);
 
   RenderType get type;
 }
 
 class Path extends RenderElement {
+  final Coord offset;
   final List<Coord> points;
   final Color color;
 
-  Path(this.points, this.color, Coord offset) : super(offset);
+  Path(
+    this.points,
+    this.color,
+    this.offset,
+    Coord start,
+    Coord end,
+  ) : super(start, end);
 
   RenderType get type => RenderType.path;
 
@@ -42,14 +49,15 @@ class Text extends RenderElement {
     this.color,
     this.fontSize,
     this.width,
-    Coord offset,
-  ) : super(offset);
+    Coord start,
+    Coord end,
+  ) : super(start, end);
 
   RenderType get type => RenderType.text;
 }
 
 class Coord {
-  final double x, y;
+  double x, y;
 
   Coord(this.x, this.y);
 

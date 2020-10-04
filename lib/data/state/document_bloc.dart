@@ -13,7 +13,7 @@ class DocumentBloc extends Bloc {
   File _file;
   Document _document;
   RenderElement _current;
-  Cabinet<Tool> _tool = Cabinet();
+  final _tool = Cabinet<Tool>();
 
   final _documentController = BehaviorSubject<Document>();
 
@@ -27,7 +27,8 @@ class DocumentBloc extends Bloc {
       switch (tool.type) {
         case ToolType.pen:
           final Pen pen = tool;
-          _current = new Path([], pen.color, Coord(x, y));
+          _current =
+              new Path([], pen.color, Coord(x, y), Coord(x, y), Coord(x, y));
           _document.pages[0].elements.add(_current);
           break;
         case ToolType.eraser:
@@ -36,12 +37,19 @@ class DocumentBloc extends Bloc {
     }
   }
 
-  panUpdate(double x, double y) {
+  panUpdate(double x, double y, double dx, double dy) {
     final tool = _tool.value;
     if (tool != null) {
       switch (tool.type) {
         case ToolType.pen:
-          (_current as Path).points.add(Coord(x, y));
+          final Path path = _current;
+          path.points.add(Coord(dx, dy));
+          if (x > path.end.x)
+            path.end.x = x;
+          else if (x < path.start.x) path.start.x = x;
+          if (y > path.end.y)
+            path.end.y = y;
+          else if (y < path.start.y) path.start.y = y;
           _documentController.add(_document);
           break;
         case ToolType.eraser:
