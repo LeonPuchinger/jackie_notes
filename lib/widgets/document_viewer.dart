@@ -33,11 +33,7 @@ class _DocumentViewerState extends State<DocumentViewer> {
             onPanStart: (details) => bloc.panStart(
                 details.localPosition.dx, details.localPosition.dy),
             onPanUpdate: (details) => bloc.panUpdate(
-              details.localPosition.dx,
-              details.localPosition.dy,
-              details.delta.dx,
-              details.delta.dy,
-            ),
+                details.localPosition.dx, details.localPosition.dy),
             child: StreamBuilder<Document>(
               stream: bloc.document,
               initialData: Document(),
@@ -68,8 +64,13 @@ class DocumentPainter extends CustomPainter {
     paint.color = element.color;
     final path = ui.Path();
     path.moveTo(element.offset.x, element.offset.y);
+    if (element.points.isEmpty) {
+      canvas.drawPoints(ui.PointMode.points,
+          [Offset(element.offset.x, element.offset.y)], paint);
+    }
     for (final c in element.points) {
-      path.relativeLineTo(c.x, c.y);
+      final relative = element.offset + c;
+      path.lineTo(relative.x, relative.y);
     }
     canvas.drawPath(path, paint);
   }

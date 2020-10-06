@@ -21,38 +21,71 @@ class DocumentBloc extends Bloc {
 
   DocumentBloc(this._appBloc);
 
+  _initPath(double x, double y) {
+    final Pen pen = _tool.value;
+    _current = new Path([], pen.color, Coord(x, y), Coord(x, y), Coord(x, y));
+    _document.pages[0].elements.add(_current);
+    _documentController.add(_document);
+  }
+
+  _drawPath(double x, double y) {
+    final Path path = _current;
+    path.points.add(Coord(x, y) - path.offset);
+    if (x > path.end.x)
+      path.end.x = x;
+    else if (x < path.start.x) path.start.x = x;
+    if (y > path.end.y)
+      path.end.y = y;
+    else if (y < path.start.y) path.start.y = y;
+    _documentController.add(_document);
+  }
+
+  _erase(double x, double y) {
+    remove(r) {
+      _document.pages[0].elements.remove(r);
+      _documentController.add(_document);
+    }
+
+    for (final r in _document.pages[0].elements) {
+      if (r.type == RenderType.path) {
+        final boxMatchesX = x >= r.start.x - 5 && x <= r.end.x + 5;
+        final boxMatchesY = y >= r.start.y - 5 && y <= r.end.y + 5;
+        if (boxMatchesX && boxMatchesY) {
+          final relative = Coord(x, y) - (r as Path).offset;
+          if ((r as Path).points.isEmpty) return remove(r);
+          for (final c in (r as Path).points) {
+            if ((c.x - relative.x).abs() < 5 && (c.y - relative.y).abs() < 5) {
+              return remove(r);
+            }
+          }
+        }
+      }
+    }
+  }
+
   panStart(double x, double y) {
     final tool = _tool.relock();
     if (tool != null) {
       switch (tool.type) {
         case ToolType.pen:
-          final Pen pen = tool;
-          _current =
-              new Path([], pen.color, Coord(x, y), Coord(x, y), Coord(x, y));
-          _document.pages[0].elements.add(_current);
+          _initPath(x, y);
           break;
         case ToolType.eraser:
+          _erase(x, y);
           break;
       }
     }
   }
 
-  panUpdate(double x, double y, double dx, double dy) {
+  panUpdate(double x, double y) {
     final tool = _tool.value;
     if (tool != null) {
       switch (tool.type) {
         case ToolType.pen:
-          final Path path = _current;
-          path.points.add(Coord(dx, dy));
-          if (x > path.end.x)
-            path.end.x = x;
-          else if (x < path.start.x) path.start.x = x;
-          if (y > path.end.y)
-            path.end.y = y;
-          else if (y < path.start.y) path.start.y = y;
-          _documentController.add(_document);
+          _drawPath(x, y);
           break;
         case ToolType.eraser:
+          _erase(x, y);
           break;
       }
     }

@@ -63,4 +63,8 @@ class Coord {
 
   @override
   String toString() => "$x $y";
+
+  Coord operator -(Coord c) => Coord(this.x - c.x, this.y - c.y);
+
+  Coord operator +(Coord c) => Coord(this.x + c.x, this.y + c.y);
 }
