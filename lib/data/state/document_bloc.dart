@@ -23,7 +23,8 @@ class DocumentBloc extends Bloc {
 
   _initPath(double x, double y) {
     final Pen pen = _tool.value;
-    _current = new Path([], pen.color, Coord(x, y), Coord(x, y), Coord(x, y));
+    _current = new Path(
+        [], pen.color, pen.width, Coord(x, y), Coord(x, y), Coord(x, y));
     _document.pages[0].elements.add(_current);
     _documentController.add(_document);
   }
@@ -46,15 +47,17 @@ class DocumentBloc extends Bloc {
       _documentController.add(_document);
     }
 
+    final Eraser e = _tool.value;
     for (final r in _document.pages[0].elements) {
       if (r.type == RenderType.path) {
-        final boxMatchesX = x >= r.start.x - 5 && x <= r.end.x + 5;
-        final boxMatchesY = y >= r.start.y - 5 && y <= r.end.y + 5;
+        final boxMatchesX = x >= r.start.x - e.width && x <= r.end.x + e.width;
+        final boxMatchesY = y >= r.start.y - e.width && y <= r.end.y + e.width;
         if (boxMatchesX && boxMatchesY) {
           final relative = Coord(x, y) - (r as Path).offset;
           if ((r as Path).points.isEmpty) return remove(r);
           for (final c in (r as Path).points) {
-            if ((c.x - relative.x).abs() < 5 && (c.y - relative.y).abs() < 5) {
+            if ((c.x - relative.x).abs() < e.width &&
+                (c.y - relative.y).abs() < e.width) {
               return remove(r);
             }
           }

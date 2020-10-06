@@ -22,10 +22,12 @@ class Path extends RenderElement {
   final Coord offset;
   final List<Coord> points;
   final Color color;
+  final double width;
 
   Path(
     this.points,
     this.color,
+    this.width,
     this.offset,
     Coord start,
     Coord end,

@@ -59,7 +59,8 @@ class DocumentPainter extends CustomPainter {
 
   paintPath(Path element, Canvas canvas) {
     final paint = Paint()
-      ..strokeWidth = 2
+      ..strokeWidth = element.width
+      ..strokeCap = StrokeCap.round
       ..style = PaintingStyle.stroke;
     paint.color = element.color;
     final path = ui.Path();

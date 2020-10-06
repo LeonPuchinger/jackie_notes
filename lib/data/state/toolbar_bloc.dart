@@ -19,7 +19,7 @@ class ToolbarBloc extends Bloc {
 
   selectPen(int index) async {
     _selectionController.add(index);
-    final tool = index == 0 ? Eraser() : _penController.value[index - 1];
+    final tool = index == 0 ? Eraser(5) : _penController.value[index - 1];
     _appBloc.addTool(tool);
   }
 
@@ -32,10 +32,10 @@ class ToolbarBloc extends Bloc {
   @override
   void init() {
     _penController.add(<Pen>[
-      Pen(Color(0xffc7c7c7)),
-      Pen(Color(0xfff02252)),
-      Pen(Color(0xff73db63)),
-      Pen(Color(0xff4990d6)),
+      Pen(Color(0xffc7c7c7), 2),
+      Pen(Color(0xfff02252), 2),
+      Pen(Color(0xff73db63), 2),
+      Pen(Color(0xff4990d6), 2),
     ]);
   }
 }

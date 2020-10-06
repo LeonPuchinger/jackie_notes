@@ -41,7 +41,8 @@ writeJvg(Document document, io.File file) async {
       "offset": "${path.start}",
       "end": "${path.end}",
       "start": "${path.offset}",
-      "color": "0x${path.color.hexString}"
+      "color": "0x${path.color.hexString}",
+      "width": "${path.width}",
     }, nest: () {
       builder.text(path.contents);
     });
@@ -117,6 +118,15 @@ Future<Document> readJvg(io.File file) async {
       return null;
     }
 
+    readWidth() {
+      final width = xml.getAttribute("width");
+      if (width != null) {
+        final result = double.tryParse(width);
+        if (result != null) return result;
+      }
+      return 2.0;
+    }
+
     readStart() {
       final start = xml.getAttribute("start");
       if (start != null) {
@@ -129,10 +139,11 @@ Future<Document> readJvg(io.File file) async {
     final points = readPoints();
     if (points == null) return null;
     final color = readColor(xml);
+    final width = readWidth();
     final offset = readOffset(xml);
     final start = readStart() ?? Coord(offset.x, offset.y);
     final end = readEnd(xml) ?? Coord(offset.x, offset.y);
-    return Path(points, color, start, offset, end);
+    return Path(points, color, width, start, offset, end);
   }
 
   readText(XmlElement xml) {
