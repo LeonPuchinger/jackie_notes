@@ -27,23 +27,27 @@ class _DocumentViewerState extends State<DocumentViewer> {
     return StreamBuilder(
       stream: _appBloc.tool,
       builder: (_, snapshot) {
-        return AbsorbPointer(
-          absorbing: snapshot.data == null,
-          child: GestureDetector(
-            onPanStart: (details) => bloc.panStart(
-                details.localPosition.dx, details.localPosition.dy),
-            onPanUpdate: (details) => bloc.panUpdate(
-                details.localPosition.dx, details.localPosition.dy),
-            child: StreamBuilder<Document>(
-              stream: bloc.document,
-              initialData: Document(),
-              builder: (context, snapshot) {
-                return CustomPaint(
-                  size: Size.infinite,
-                  isComplex: true,
-                  painter: DocumentPainter(snapshot.data),
-                );
-              },
+        return Scrollbar(
+          child: SingleChildScrollView(
+            child: AbsorbPointer(
+              absorbing: snapshot.data == null,
+              child: GestureDetector(
+                onPanStart: (details) => bloc.panStart(
+                    details.localPosition.dx, details.localPosition.dy),
+                onPanUpdate: (details) => bloc.panUpdate(
+                    details.localPosition.dx, details.localPosition.dy),
+                child: StreamBuilder<Document>(
+                  stream: bloc.document,
+                  initialData: Document(),
+                  builder: (context, snapshot) {
+                    return CustomPaint(
+                      size: Size(5000, 5000),
+                      isComplex: true,
+                      painter: DocumentPainter(snapshot.data),
+                    );
+                  },
+                ),
+              ),
             ),
           ),
         );
