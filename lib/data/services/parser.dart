@@ -1,13 +1,17 @@
 import 'package:jackie_notes/data/document.dart';
 import 'package:petitparser/petitparser.dart';
 
-final float = [
+final float = (digit().plus() & (char('.') & digit().plus()).optional())
+    .flatten()
+    .map<double>(double.parse);
+
+final signedFloat = [
   char('-').optional(),
   digit().plus(),
   (char('.') & digit().plus()).optional()
 ].toSequenceParser().flatten().map<double>(double.parse);
 
-final coord = (float & char(' ').plus() & float)
+final coord = (signedFloat & char(' ').plus() & signedFloat)
     .map<Coord>((value) => Coord(value[0], value[2]));
 
 final coords = coord

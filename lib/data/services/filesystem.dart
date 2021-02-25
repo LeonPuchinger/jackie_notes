@@ -61,7 +61,10 @@ writeJvg(Document document, io.File file) async {
   }
 
   final builder = XmlBuilder();
-  builder.element("jvg", nest: () {
+  builder.element("jvg", attributes: {
+    "page-height": "${document.pageHeight}",
+    "page-margin": "${document.pageMargin}",
+  }, nest: () {
     for (final page in document.pages) {
       builder.element("page", nest: () {
         for (final element in page.elements) {
@@ -81,6 +84,30 @@ writeJvg(Document document, io.File file) async {
 }
 
 Future<Document> readJvg(io.File file) async {
+  readDocument(XmlElement xml) {
+    readPageHeight(XmlElement xml) {
+      final height = xml.getAttribute("page-height");
+      if (height != null) {
+        final result = float.parse(height);
+        if (result.isSuccess) return result.value;
+      }
+      return 2000.0;
+    }
+
+    readPageMargin(XmlElement xml) {
+      final margin = xml.getAttribute("page-margin");
+      if (margin != null) {
+        final result = float.parse(margin);
+        if (result.isSuccess) return result.value;
+      }
+      return 20.0;
+    }
+
+    final height = readPageHeight(xml);
+    final margin = readPageMargin(xml);
+    return Document(pageHeight: height, pageMargin: margin);
+  }
+
   readColor(XmlElement xml) {
     final color = xml.getAttribute("color");
     if (color != null) {
@@ -182,26 +209,25 @@ Future<Document> readJvg(io.File file) async {
   }
 
   final xml = XmlDocument.parse(file.readAsStringSync());
-  final document = Document();
-  for (final xmlJvg in xml.findElements("jvg")) {
-    for (final xmlPage in xmlJvg.findElements("page")) {
-      final page = Page();
-      for (final xmlElement in xmlPage.children) {
-        if (xmlElement.nodeType == XmlNodeType.ELEMENT) {
-          switch ((xmlElement as XmlElement).name.toString()) {
-            case "path":
-              final path = readPath(xmlElement);
-              if (path != null) page.elements.add(path);
-              break;
-            case "text":
-              final text = readText(xmlElement);
-              if (text != null) page.elements.add(text);
-              break;
-          }
+  final xmlJvg = xml.getElement("jvg");
+  final document = readDocument(xmlJvg);
+  for (final xmlPage in xmlJvg.findElements("page")) {
+    final page = Page();
+    for (final xmlElement in xmlPage.children) {
+      if (xmlElement.nodeType == XmlNodeType.ELEMENT) {
+        switch ((xmlElement as XmlElement).name.toString()) {
+          case "path":
+            final path = readPath(xmlElement);
+            if (path != null) page.elements.add(path);
+            break;
+          case "text":
+            final text = readText(xmlElement);
+            if (text != null) page.elements.add(text);
+            break;
         }
       }
-      document.pages.add(page);
     }
+    document.pages.add(page);
   }
   if (document.pages.isEmpty) document.pages.add(Page());
   return document;

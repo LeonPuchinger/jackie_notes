@@ -1,7 +1,10 @@
 import 'package:flutter/rendering.dart' show Color;
 
 class Document {
+  final double pageHeight, pageMargin;
   final List<Page> pages = [];
+
+  Document({this.pageHeight = 2000, this.pageMargin = 20});
 }
 
 class Page {
