@@ -1,19 +1,21 @@
-import 'package:combinator/combinator.dart';
 import 'package:jackie_notes/data/document.dart';
-export 'package:string_scanner/string_scanner.dart' show SpanScanner;
+import 'package:petitparser/petitparser.dart';
 
-final number = match(RegExp(r"-?[0-9]+(\.[0-9]+)?"))
-    .map<double>((r) => double.parse(r.span.text));
+final float = [
+  char('-').optional(),
+  digit().plus(),
+  (char('.') & digit().plus()).optional()
+].toSequenceParser().flatten().map<double>(double.parse);
 
-final coord = chain([
-  number,
-  match(" ").space(),
-  number,
-]).map<Coord>((r) => Coord(r.value[0], r.value[2]));
+final coord = (float & char(' ').plus() & float)
+    .map<Coord>((value) => Coord(value[0], value[2]));
 
-final coords = coord.separatedBy(match(" ").space());
+final coords = coord
+    .separatedBy(char(' ').plus(), includeSeparators: false)
+    .castList<Coord>();
 
-final hex32 = chain([
-  match(RegExp("0[Xx]")),
-  match(RegExp("[0-9a-fA-F]{8}")).map<String>((r) => r.span.text),
-]).map<int>((r) => int.parse(r.value[1], radix: 16));
+final hex = [
+  char('0'),
+  (char('X') | char('x')),
+  pattern("0-9a-fA-F").plus().flatten()
+].toSequenceParser().map<int>((value) => int.parse(value[2], radix: 16));

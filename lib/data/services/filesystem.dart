@@ -84,8 +84,8 @@ Future<Document> readJvg(io.File file) async {
   readColor(XmlElement xml) {
     final color = xml.getAttribute("color");
     if (color != null) {
-      final result = hex32.parse(SpanScanner(color));
-      if (result.successful) return Color(result.value);
+      final result = hex.parse(color);
+      if (result.isSuccess) return Color(result.value);
     }
     return Color(0xffaaaaaa);
   }
@@ -93,8 +93,8 @@ Future<Document> readJvg(io.File file) async {
   readOffset(XmlElement xml) {
     final offset = xml.getAttribute("offset");
     if (offset != null) {
-      final result = coord.parse(SpanScanner(offset));
-      if (result.successful) return result.value;
+      final result = coord.parse(offset);
+      if (result.isSuccess) return result.value;
     }
     return Coord(0, 0);
   }
@@ -102,8 +102,8 @@ Future<Document> readJvg(io.File file) async {
   readEnd(XmlElement xml) {
     final end = xml.getAttribute("end");
     if (end != null) {
-      final result = coord.parse(SpanScanner(end));
-      return result.value;
+      final result = coord.parse(end);
+      if (result.isSuccess) return result.value;
     }
     return null;
   }
@@ -112,8 +112,8 @@ Future<Document> readJvg(io.File file) async {
     readPoints() {
       final points = xml.innerText.replaceAll("\n", "");
       if (points != null) {
-        final result = coords.parse(SpanScanner(points));
-        if (result.successful) return result.value;
+        final result = coords.parse(points);
+        if (result.isSuccess) return result.value;
       }
       return null;
     }
@@ -130,8 +130,8 @@ Future<Document> readJvg(io.File file) async {
     readStart() {
       final start = xml.getAttribute("start");
       if (start != null) {
-        final result = coord.parse(SpanScanner(start));
-        return result.value;
+        final result = coord.parse(start);
+        if (result.isSuccess) return result.value;
       }
       return null;
     }
