@@ -38,9 +38,9 @@ createJvg(String path) async {
 writeJvg(Document document, io.File file) async {
   buildPath(XmlBuilder builder, Path path) {
     builder.element("path", attributes: {
-      "offset": "${path.start}",
+      "start": "${path.start}",
       "end": "${path.end}",
-      "start": "${path.offset}",
+      "offset": "${path.offset}",
       "color": "0x${path.color.hexString}",
       "width": "${path.width}",
     }, nest: () {
@@ -50,7 +50,7 @@ writeJvg(Document document, io.File file) async {
 
   buildText(XmlBuilder builder, Text text) {
     builder.element("text", attributes: {
-      "offset": "${text.start}",
+      "start": "${text.start}",
       "end": "${text.end}",
       "color": "0x${text.color.hexString}",
       "font-size": "${text.fontSize}",
@@ -90,10 +90,10 @@ Future<Document> readJvg(io.File file) async {
     return Color(0xffaaaaaa);
   }
 
-  readOffset(XmlElement xml) {
-    final offset = xml.getAttribute("offset");
-    if (offset != null) {
-      final result = coord.parse(offset);
+  readStart(XmlElement xml) {
+    final start = xml.getAttribute("start");
+    if (start != null) {
+      final result = coord.parse(start);
       if (result.isSuccess) return result.value;
     }
     return Coord(0, 0);
@@ -127,10 +127,10 @@ Future<Document> readJvg(io.File file) async {
       return 2.0;
     }
 
-    readStart() {
-      final start = xml.getAttribute("start");
-      if (start != null) {
-        final result = coord.parse(start);
+    readOffset() {
+      final offset = xml.getAttribute("offset");
+      if (offset != null) {
+        final result = coord.parse(offset);
         if (result.isSuccess) return result.value;
       }
       return null;
@@ -140,10 +140,10 @@ Future<Document> readJvg(io.File file) async {
     if (points == null) return null;
     final color = readColor(xml);
     final width = readWidth();
-    final offset = readOffset(xml);
-    final start = readStart() ?? Coord(offset.x, offset.y);
-    final end = readEnd(xml) ?? Coord(offset.x, offset.y);
-    return Path(points, color, width, start, offset, end);
+    final start = readStart(xml);
+    final end = readEnd(xml) ?? Coord(start.x, start.y);
+    final offset = readOffset() ?? Coord(start.x, start.y);
+    return Path(points, color, width, offset, start, end);
   }
 
   readText(XmlElement xml) {
@@ -176,9 +176,9 @@ Future<Document> readJvg(io.File file) async {
     final color = readColor(xml);
     final size = readFontSize();
     final width = readWidth();
-    final offset = readOffset(xml);
-    final end = readEnd(xml) ?? Coord(offset.x, offset.y);
-    return Text(text, color, size, width, offset, end);
+    final start = readStart(xml);
+    final end = readEnd(xml) ?? Coord(start.x, start.y);
+    return Text(text, color, size, width, start, end);
   }
 
   final xml = XmlDocument.parse(file.readAsStringSync());
