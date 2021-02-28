@@ -22,10 +22,17 @@ class DocumentBloc extends Bloc {
 
   DocumentBloc(this._appBloc);
 
+  _pageOffset(double y) {
+    final pagestart = _currentPage * _document.pageHeight;
+    return y - pagestart;
+  }
+
+  _updateCurrentPage(double y) => _currentPage = y ~/ _document.pageHeight;
+
   _initPath(double x, double y) {
     final Pen pen = _tool.value;
-    _currentPage = y ~/ _document.pageHeight;
-    double pageoffset = y % _document.pageHeight;
+    _updateCurrentPage(y);
+    final pageoffset = _pageOffset(y);
     _current = new Path([], pen.color, pen.width, Coord(x, pageoffset),
         Coord(x, pageoffset), Coord(x, pageoffset));
     _document.accessPage(_currentPage).elements.add(_current);
@@ -34,31 +41,34 @@ class DocumentBloc extends Bloc {
 
   _drawPath(double x, double y) {
     final Path path = _current;
-    double pagestart = _currentPage * _document.pageHeight;
-    double pageoffset = y - pagestart;
-    path.points.add(Coord(x, pageoffset) - path.offset);
+    final pageOffset = _pageOffset(y);
+    path.points.add(Coord(x, pageOffset) - path.offset);
     if (x > path.end.x)
       path.end.x = x;
     else if (x < path.start.x) path.start.x = x;
-    if (pageoffset > path.end.y)
-      path.end.y = pageoffset;
-    else if (pageoffset < path.start.y) path.start.y = pageoffset;
+    if (pageOffset > path.end.y)
+      path.end.y = pageOffset;
+    else if (pageOffset < path.start.y) path.start.y = pageOffset;
     _documentController.add(_document);
   }
 
+  //TODO: add ability to erase elements overlapping onto current page
   _erase(double x, double y) {
     remove(r) {
-      _document.pages[0].elements.remove(r);
+      _document.pages[_currentPage].elements.remove(r);
       _documentController.add(_document);
     }
 
     final Eraser e = _tool.value;
-    for (final r in _document.pages[0].elements) {
+    _updateCurrentPage(y);
+    final pageOffset = _pageOffset(y);
+    for (final r in _document.pages[_currentPage].elements) {
       if (r.type == RenderType.path) {
         final boxMatchesX = x >= r.start.x - e.width && x <= r.end.x + e.width;
-        final boxMatchesY = y >= r.start.y - e.width && y <= r.end.y + e.width;
+        final boxMatchesY = pageOffset >= r.start.y - e.width &&
+            pageOffset <= r.end.y + e.width;
         if (boxMatchesX && boxMatchesY) {
-          final relative = Coord(x, y) - (r as Path).offset;
+          final relative = Coord(x, pageOffset) - (r as Path).offset;
           if ((r as Path).points.isEmpty) return remove(r);
           for (final c in (r as Path).points) {
             if ((c.x - relative.x).abs() < e.width &&
