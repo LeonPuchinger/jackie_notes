@@ -29,7 +29,7 @@ class _JackieAppState extends State<JackieApp> {
     return Provider<AppBloc>.value(
       value: appBloc,
       child: MaterialApp(
-        themeMode: ThemeMode.dark,
+        themeMode: ThemeMode.system,
         darkTheme: ThemeData(
           brightness: Brightness.dark,
           visualDensity: VisualDensity.adaptivePlatformDensity,

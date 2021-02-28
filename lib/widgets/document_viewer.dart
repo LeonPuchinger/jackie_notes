@@ -3,6 +3,7 @@ import 'package:jackie_notes/data/document.dart';
 import 'package:jackie_notes/data/state/app_bloc.dart';
 import 'package:jackie_notes/data/state/document_bloc.dart';
 import 'package:provider/provider.dart';
+import 'dart:math';
 import 'dart:ui' as ui;
 
 class DocumentViewer extends StatefulWidget {
@@ -43,7 +44,9 @@ class _DocumentViewerState extends State<DocumentViewer> {
                     return CustomPaint(
                       size: Size(5000, 5000),
                       isComplex: true,
-                      painter: DocumentPainter(snapshot.data),
+                      painter: BackgroundPainter(
+                          snapshot.data, Theme.of(context).brightness),
+                      foregroundPainter: DocumentPainter(snapshot.data),
                     );
                   },
                 ),
@@ -54,6 +57,61 @@ class _DocumentViewerState extends State<DocumentViewer> {
       },
     );
   }
+}
+
+class BackgroundPainter extends CustomPainter {
+  final Document document;
+  final Brightness themeMode;
+  static const _gridSize = 20;
+
+  BackgroundPainter(this.document, this.themeMode);
+
+  paintBackgroundPattern(Canvas canvas, Size size) {
+    final backgroundPaint = Paint()
+      ..color =
+          themeMode == Brightness.dark ? Color(0x50000000) : Color(0xffffffff);
+    canvas.drawRect(
+        Rect.fromPoints(Offset(0, 0), Offset(size.width, size.height)),
+        backgroundPaint);
+    canvas.save();
+    canvas.translate(-_gridSize / 2, -_gridSize / 2);
+    final patternPaint = Paint()
+      ..color =
+          themeMode == Brightness.dark ? Color(0xff4a4a4a) : Color(0xffcaebfd);
+    for (double x = 0; x <= size.width; x += _gridSize) {
+      canvas.drawLine(
+          Offset(x, 0), Offset(x, size.height + _gridSize), patternPaint);
+    }
+    for (double y = 0; y <= size.height; y += _gridSize) {
+      canvas.drawLine(
+          Offset(0, y), Offset(size.width + _gridSize, y), patternPaint);
+    }
+    canvas.restore();
+  }
+
+  paintPageOutline(Canvas canvas) {
+    final outlinePaint = Paint()
+      ..style = PaintingStyle.stroke
+      ..color = Colors.grey;
+    canvas.translate(document.pageMargin, 0);
+    for (final _ in document.pages) {
+      canvas.translate(0, document.pageMargin);
+      final outline = Rect.fromLTWH(
+          0, 0, document.pageHeight / sqrt(2), document.pageHeight);
+      canvas.drawRect(outline, outlinePaint);
+      canvas.translate(0, document.pageMargin);
+      canvas.translate(0, document.pageHeight);
+    }
+  }
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    paintBackgroundPattern(canvas, size);
+    paintPageOutline(canvas);
+  }
+
+  @override
+  bool shouldRepaint(BackgroundPainter oldDelegate) => false;
 }
 
 class DocumentPainter extends CustomPainter {

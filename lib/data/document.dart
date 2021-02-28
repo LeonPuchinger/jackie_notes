@@ -4,7 +4,7 @@ class Document {
   final double pageHeight, pageMargin;
   final List<Page> pages = [];
 
-  Document({this.pageHeight = 2000, this.pageMargin = 20});
+  Document({this.pageHeight = 1000, this.pageMargin = 20});
 
   Page accessPage(int index) {
     if (index >= pages.length) {
