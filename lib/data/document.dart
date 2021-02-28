@@ -5,6 +5,15 @@ class Document {
   final List<Page> pages = [];
 
   Document({this.pageHeight = 2000, this.pageMargin = 20});
+
+  Page accessPage(int index) {
+    if (index >= pages.length) {
+      for (int i = index - pages.length; i >= 0; i--) {
+        pages.add(Page());
+      }
+    }
+    return pages[index];
+  }
 }
 
 class Page {

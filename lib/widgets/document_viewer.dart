@@ -65,8 +65,8 @@ class DocumentPainter extends CustomPainter {
     final paint = Paint()
       ..strokeWidth = element.width
       ..strokeCap = StrokeCap.round
-      ..style = PaintingStyle.stroke;
-    paint.color = element.color;
+      ..style = PaintingStyle.stroke
+      ..color = element.color;
     final path = ui.Path();
     path.moveTo(element.offset.x, element.offset.y);
     if (element.points.isEmpty) {
@@ -98,17 +98,18 @@ class DocumentPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    for (final p in document.pages) {
-      for (final r in p.elements) {
-        switch (r.type) {
+    for (final page in document.pages) {
+      for (final element in page.elements) {
+        switch (element.type) {
           case RenderType.path:
-            paintPath(r, canvas);
+            paintPath(element, canvas);
             break;
           case RenderType.text:
-            paintText(r, canvas);
+            paintText(element, canvas);
             break;
         }
       }
+      canvas.translate(0, document.pageHeight);
     }
   }
 

@@ -13,6 +13,7 @@ class DocumentBloc extends Bloc {
   File _file;
   Document _document;
   RenderElement _current;
+  int _currentPage;
   final _tool = Cabinet<Tool>();
 
   final _documentController = BehaviorSubject<Document>();
@@ -23,21 +24,25 @@ class DocumentBloc extends Bloc {
 
   _initPath(double x, double y) {
     final Pen pen = _tool.value;
-    _current = new Path(
-        [], pen.color, pen.width, Coord(x, y), Coord(x, y), Coord(x, y));
-    _document.pages[0].elements.add(_current);
+    _currentPage = y ~/ _document.pageHeight;
+    double pageoffset = y % _document.pageHeight;
+    _current = new Path([], pen.color, pen.width, Coord(x, pageoffset),
+        Coord(x, pageoffset), Coord(x, pageoffset));
+    _document.accessPage(_currentPage).elements.add(_current);
     _documentController.add(_document);
   }
 
   _drawPath(double x, double y) {
     final Path path = _current;
-    path.points.add(Coord(x, y) - path.offset);
+    double pagestart = _currentPage * _document.pageHeight;
+    double pageoffset = y - pagestart;
+    path.points.add(Coord(x, pageoffset) - path.offset);
     if (x > path.end.x)
       path.end.x = x;
     else if (x < path.start.x) path.start.x = x;
-    if (y > path.end.y)
-      path.end.y = y;
-    else if (y < path.start.y) path.start.y = y;
+    if (pageoffset > path.end.y)
+      path.end.y = pageoffset;
+    else if (pageoffset < path.start.y) path.start.y = pageoffset;
     _documentController.add(_document);
   }
 
