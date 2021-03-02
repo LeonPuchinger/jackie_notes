@@ -73,13 +73,16 @@ class BackgroundPainter extends CustomPainter {
 
   BackgroundPainter(this.document, this.themeMode, this.options);
 
-  paintBackgroundPattern(Canvas canvas, Size size) {
+  paintBackground(Canvas canvas, Size size) {
     final backgroundPaint = Paint()
       ..color =
           themeMode == Brightness.dark ? Color(0x50000000) : Color(0xffffffff);
     canvas.drawRect(
         Rect.fromPoints(Offset(0, 0), Offset(size.width, size.height)),
         backgroundPaint);
+  }
+
+  paintGrid(Canvas canvas, Size size) {
     canvas.save();
     canvas.translate(-_gridSize / 2, -_gridSize / 2);
     final patternPaint = Paint()
@@ -113,8 +116,9 @@ class BackgroundPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
+    paintBackground(canvas, size);
     if (options["showGrid"] ?? false) {
-      paintBackgroundPattern(canvas, size);
+      paintGrid(canvas, size);
     }
     if (options["showOutline"] ?? false) {
       paintPageOutline(canvas);
