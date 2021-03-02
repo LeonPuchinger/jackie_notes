@@ -33,10 +33,24 @@ class _JackieAppState extends State<JackieApp> {
         darkTheme: ThemeData(
           brightness: Brightness.dark,
           visualDensity: VisualDensity.adaptivePlatformDensity,
+          colorScheme: ColorScheme.dark(),
+          toggleButtonsTheme: ToggleButtonsThemeData(
+            fillColor: Colors.white.withAlpha(40),
+            hoverColor: Colors.white.withAlpha(30),
+            selectedColor: Colors.white,
+            borderRadius: BorderRadius.circular(4),
+          ),
         ),
         theme: ThemeData(
-          primarySwatch: Colors.grey,
+          primarySwatch: Colors.teal,
           visualDensity: VisualDensity.adaptivePlatformDensity,
+          colorScheme: ColorScheme.light(),
+          toggleButtonsTheme: ToggleButtonsThemeData(
+            fillColor: Colors.white.withAlpha(60),
+            hoverColor: Colors.white.withAlpha(30),
+            selectedColor: Colors.black,
+            borderRadius: BorderRadius.circular(4),
+          ),
         ),
         home: SafeArea(
           child: ResponsiveScaffold(
