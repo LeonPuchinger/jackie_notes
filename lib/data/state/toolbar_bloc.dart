@@ -1,41 +1,52 @@
+import 'dart:async';
+
 import 'package:jackie_notes/data/state/app_bloc.dart';
 import 'package:jackie_notes/data/state/bloc.dart';
 import 'package:jackie_notes/data/tool.dart';
 import 'package:rxdart/rxdart.dart';
 
-//FIXME: should probably replace with non-ui class to separate concerns
-import 'package:flutter/rendering.dart' show Color;
-
 class ToolbarBloc extends Bloc {
   final AppBloc _appBloc;
 
-  final _penController = BehaviorSubject<List<Pen>>();
-  final _selectionController = BehaviorSubject<int>();
+  final _toolSelectionController = BehaviorSubject<int>();
 
-  Stream<List<Pen>> get pens => _penController.stream;
-  Stream<int> get selection => _selectionController.stream;
+  Stream<List<Pen>> get pens => _appBloc.settings.pens;
+  Stream<int> get toolSelection => _toolSelectionController.stream;
+  Stream<List<bool>> get optionSelection => CombineLatestStream(
+        [
+          _appBloc.settings.showGrid,
+          _appBloc.settings.showOutline,
+        ],
+        (values) => values,
+      );
 
   ToolbarBloc(this._appBloc);
 
-  selectPen(int index) async {
-    _selectionController.add(index);
-    final tool = index == 0 ? Eraser(5) : _penController.value[index - 1];
+  selectPen(int index) {
+    _toolSelectionController.add(index);
+    final tool =
+        index == 0 ? Eraser(5) : _appBloc.settings.pensValue[index - 1];
     _appBloc.addTool(tool);
+  }
+
+  selectOption(int index) {
+    switch (index) {
+      case 0:
+        final current = _appBloc.settings.showGridValue;
+        _appBloc.settings.setShowGrid(!current);
+        break;
+      case 1:
+        final current = _appBloc.settings.showOutlineValue;
+        _appBloc.settings.setShowOutline(!current);
+        break;
+    }
   }
 
   @override
   void dispose() {
-    _penController.close();
-    _selectionController.close();
+    _toolSelectionController.close();
   }
 
   @override
-  void init() {
-    _penController.add(<Pen>[
-      Pen(Color(0xffc7c7c7), 2),
-      Pen(Color(0xfff02252), 2),
-      Pen(Color(0xff73db63), 2),
-      Pen(Color(0xff4990d6), 2),
-    ]);
-  }
+  void init() {}
 }

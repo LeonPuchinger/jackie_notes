@@ -14,7 +14,7 @@ class Toolbar extends StatefulWidget {
 class _ToolbarState extends State<Toolbar> {
   ToolbarBloc bloc;
 
-  List<bool> isSelected(int selection, int length) {
+  List<bool> toolIsSelected(int selection, int length) {
     final selected = List.filled(length + 1, false);
     if (selection != null) selected[selection] = true;
     return selected;
@@ -36,7 +36,7 @@ class _ToolbarState extends State<Toolbar> {
         children: [
           DualStreamBuilder<List<Pen>, int>(
             streamA: bloc.pens,
-            streamB: bloc.selection,
+            streamB: bloc.toolSelection,
             initialDataA: [],
             builder: (_, snapshotA, snapshotB) {
               return ToggleButtons(
@@ -46,11 +46,56 @@ class _ToolbarState extends State<Toolbar> {
                 ],
                 renderBorder: false,
                 onPressed: bloc.selectPen,
-                isSelected: isSelected(snapshotB.data, snapshotA.data.length),
+                isSelected:
+                    toolIsSelected(snapshotB.data, snapshotA.data.length),
               );
             },
-          )
+          ),
+          Separator(),
+          StreamBuilder<List<bool>>(
+              stream: bloc.optionSelection,
+              initialData: [false, false],
+              builder: (context, snapshot) {
+                return ToggleButtons(
+                  children: [
+                    Tooltip(
+                      message: "Show Grid Lines",
+                      child: Icon(Icons.grid_on_sharp),
+                    ),
+                    Tooltip(
+                      message: "Show Page Outline",
+                      child: Icon(Icons.insert_drive_file_outlined),
+                    ),
+                  ],
+                  renderBorder: false,
+                  focusColor: Colors.green,
+                  onPressed: bloc.selectOption,
+                  isSelected: snapshot.data,
+                );
+              }),
         ],
+      ),
+    );
+  }
+}
+
+class Separator extends StatelessWidget {
+  final double height, width, padding;
+
+  Separator({
+    this.height = 30.0,
+    this.width = 1.0,
+    this.padding = 4.0,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: padding),
+      child: Container(
+        color: Theme.of(context).dividerColor,
+        width: width,
+        height: height,
       ),
     );
   }

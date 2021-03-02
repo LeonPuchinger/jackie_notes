@@ -19,6 +19,15 @@ class DocumentBloc extends Bloc {
   final _documentController = BehaviorSubject<Document>();
 
   Stream<Document> get document => _documentController.stream;
+  Stream<Map<String, bool>> get backgroundOptions => CombineLatestStream(
+          [
+            _appBloc.settings.showGrid,
+            _appBloc.settings.showOutline,
+          ],
+          (values) => {
+                "showGrid": values[0],
+                "showOutline": values[1],
+              });
 
   DocumentBloc(this._appBloc);
 

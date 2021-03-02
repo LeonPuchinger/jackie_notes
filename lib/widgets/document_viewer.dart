@@ -2,6 +2,7 @@ import 'package:flutter/material.dart' hide Text;
 import 'package:jackie_notes/data/document.dart';
 import 'package:jackie_notes/data/state/app_bloc.dart';
 import 'package:jackie_notes/data/state/document_bloc.dart';
+import 'package:jackie_notes/util/dual_streambuilder.dart';
 import 'package:provider/provider.dart';
 import 'dart:math';
 import 'dart:ui' as ui;
@@ -37,16 +38,21 @@ class _DocumentViewerState extends State<DocumentViewer> {
                     details.localPosition.dx, details.localPosition.dy),
                 onPanUpdate: (details) => bloc.panUpdate(
                     details.localPosition.dx, details.localPosition.dy),
-                child: StreamBuilder<Document>(
-                  stream: bloc.document,
-                  initialData: Document(),
-                  builder: (context, snapshot) {
+                child: DualStreamBuilder<Document, Map<String, bool>>(
+                  streamA: bloc.document,
+                  streamB: bloc.backgroundOptions,
+                  initialDataA: Document(),
+                  initialDataB: {"showGrid": false, "showOutline": false},
+                  builder: (context, snapshotA, snapshotB) {
                     return CustomPaint(
                       size: Size(5000, 5000),
                       isComplex: true,
                       painter: BackgroundPainter(
-                          snapshot.data, Theme.of(context).brightness),
-                      foregroundPainter: DocumentPainter(snapshot.data),
+                        snapshotA.data,
+                        Theme.of(context).brightness,
+                        snapshotB.data,
+                      ),
+                      foregroundPainter: DocumentPainter(snapshotA.data),
                     );
                   },
                 ),
@@ -62,9 +68,10 @@ class _DocumentViewerState extends State<DocumentViewer> {
 class BackgroundPainter extends CustomPainter {
   final Document document;
   final Brightness themeMode;
+  final Map<String, bool> options;
   static const _gridSize = 20;
 
-  BackgroundPainter(this.document, this.themeMode);
+  BackgroundPainter(this.document, this.themeMode, this.options);
 
   paintBackgroundPattern(Canvas canvas, Size size) {
     final backgroundPaint = Paint()
@@ -106,8 +113,12 @@ class BackgroundPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    paintBackgroundPattern(canvas, size);
-    paintPageOutline(canvas);
+    if (options["showGrid"] ?? false) {
+      paintBackgroundPattern(canvas, size);
+    }
+    if (options["showOutline"] ?? false) {
+      paintPageOutline(canvas);
+    }
   }
 
   @override
