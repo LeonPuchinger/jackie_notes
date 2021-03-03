@@ -32,48 +32,52 @@ class _ToolbarState extends State<Toolbar> {
     bloc ??= ToolbarBloc(_appBloc);
 
     return AppBar(
-      title: Row(
-        children: [
-          DualStreamBuilder<List<Pen>, int>(
-            streamA: bloc.pens,
-            streamB: bloc.toolSelection,
-            initialDataA: [],
-            builder: (_, snapshotA, snapshotB) {
-              return ToggleButtons(
-                children: [
-                  Eraser(),
-                  for (final pen in snapshotA.data) Pencil(pen.color)
-                ],
-                renderBorder: false,
-                onPressed: bloc.selectPen,
-                isSelected:
-                    toolIsSelected(snapshotB.data, snapshotA.data.length),
-              );
-            },
-          ),
-          Separator(),
-          StreamBuilder<List<bool>>(
-              stream: bloc.optionSelection,
-              initialData: [false, false],
-              builder: (context, snapshot) {
+      centerTitle: false,
+      title: SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        child: Row(
+          children: [
+            DualStreamBuilder<List<Pen>, int>(
+              streamA: bloc.pens,
+              streamB: bloc.toolSelection,
+              initialDataA: [],
+              builder: (_, snapshotA, snapshotB) {
                 return ToggleButtons(
                   children: [
-                    Tooltip(
-                      message: "Show Grid Lines",
-                      child: Icon(Icons.grid_on_sharp),
-                    ),
-                    Tooltip(
-                      message: "Show Page Outline",
-                      child: Icon(Icons.insert_drive_file_outlined),
-                    ),
+                    Eraser(),
+                    for (final pen in snapshotA.data) Pencil(pen.color)
                   ],
                   renderBorder: false,
-                  focusColor: Colors.green,
-                  onPressed: bloc.selectOption,
-                  isSelected: snapshot.data,
+                  onPressed: bloc.selectPen,
+                  isSelected:
+                      toolIsSelected(snapshotB.data, snapshotA.data.length),
                 );
-              }),
-        ],
+              },
+            ),
+            Separator(),
+            StreamBuilder<List<bool>>(
+                stream: bloc.optionSelection,
+                initialData: [false, false],
+                builder: (context, snapshot) {
+                  return ToggleButtons(
+                    children: [
+                      Tooltip(
+                        message: "Show Grid Lines",
+                        child: Icon(Icons.grid_on_sharp),
+                      ),
+                      Tooltip(
+                        message: "Show Page Outline",
+                        child: Icon(Icons.insert_drive_file_outlined),
+                      ),
+                    ],
+                    renderBorder: false,
+                    focusColor: Colors.green,
+                    onPressed: bloc.selectOption,
+                    isSelected: snapshot.data,
+                  );
+                }),
+          ],
+        ),
       ),
     );
   }
@@ -85,7 +89,7 @@ class Separator extends StatelessWidget {
   Separator({
     this.height = 30.0,
     this.width = 1.0,
-    this.padding = 4.0,
+    this.padding = 8.0,
   });
 
   @override
