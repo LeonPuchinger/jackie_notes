@@ -5,6 +5,10 @@ import 'package:jackie_notes/data/state/notelist_bloc.dart';
 import 'package:provider/provider.dart';
 
 class NoteList extends StatefulWidget {
+  final Function onEntrySelected;
+
+  NoteList({this.onEntrySelected});
+
   @override
   _NoteListState createState() => _NoteListState();
 }
@@ -51,7 +55,12 @@ class _NoteListState extends State<NoteList> {
                 itemBuilder: (_, index) {
                   return ListItem(
                     name: snapshot.data[index].name,
-                    onTap: () => bloc.selectEntity(index),
+                    onTap: () {
+                      bloc.selectEntity(index);
+                      if (widget.onEntrySelected != null) {
+                        widget.onEntrySelected();
+                      }
+                    },
                     directory: snapshot.data[index] is Directory,
                   );
                 },

@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:jackie_notes/data/document.dart';
@@ -15,6 +16,7 @@ class DocumentBloc extends Bloc {
   RenderElement _current;
   int _currentPage;
   final _tool = Cabinet<Tool>();
+  StreamSubscription documentSubscription, toolSubscription;
 
   final _documentController = BehaviorSubject<Document>();
 
@@ -120,18 +122,20 @@ class DocumentBloc extends Bloc {
 
   @override
   void dispose() {
+    documentSubscription?.cancel();
+    toolSubscription?.cancel();
     _documentController.close();
   }
 
   @override
   void init() {
     //TODO: find better way for appbloc to tell document_bloc which note to use (esp. for multiple document_blocs)
-    _appBloc.edit.listen((note) async {
+    documentSubscription = _appBloc.edit.listen((note) async {
       _file = File(note.path);
       _document = await readJvg(_file);
       _documentController.add(_document);
     });
-    _appBloc.tool.listen((tool) => _tool.value = tool);
+    toolSubscription = _appBloc.tool.listen((tool) => _tool.value = tool);
     document
         .debounceTime(Duration(seconds: 1))
         .listen((document) => writeJvg(document, _file));

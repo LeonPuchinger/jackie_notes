@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:jackie_notes/data/state/app_bloc.dart';
-import 'package:jackie_notes/widgets/document_viewer.dart';
-import 'package:jackie_notes/widgets/notelist.dart';
 import 'package:jackie_notes/widgets/responsive_scaffold.dart';
-import 'package:jackie_notes/widgets/toolbar.dart';
 import 'package:provider/provider.dart';
 
 void main() {
@@ -53,27 +50,7 @@ class _JackieAppState extends State<JackieApp> {
           ),
         ),
         home: SafeArea(
-          child: ResponsiveScaffold(
-            toolbar: StreamBuilder(
-              stream: appBloc.edit,
-              builder: (_, snapshot) {
-                if (snapshot.hasData)
-                  return Toolbar();
-                else
-                  return Container();
-              },
-            ),
-            sidebar: NoteList(),
-            main: StreamBuilder(
-              stream: appBloc.edit,
-              builder: (_, snapshot) {
-                if (snapshot.hasData)
-                  return DocumentViewer();
-                else
-                  return Center(child: Text("No Documents opened"));
-              },
-            ),
-          ),
+          child: ResponsiveScaffold(),
         ),
       ),
     );
