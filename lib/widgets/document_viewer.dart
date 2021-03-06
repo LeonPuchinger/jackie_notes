@@ -7,6 +7,8 @@ import 'package:provider/provider.dart';
 import 'dart:math';
 import 'dart:ui' as ui;
 
+import 'package:rxdart/subjects.dart';
+
 class DocumentViewer extends StatefulWidget {
   @override
   _DocumentViewerState createState() => _DocumentViewerState();
@@ -14,10 +16,12 @@ class DocumentViewer extends StatefulWidget {
 
 class _DocumentViewerState extends State<DocumentViewer> {
   DocumentBloc bloc;
+  final pointerInput = BehaviorSubject<bool>.seeded(false);
 
   @override
   void dispose() {
     bloc?.dispose();
+    pointerInput.close();
     super.dispose();
   }
 
@@ -26,41 +30,54 @@ class _DocumentViewerState extends State<DocumentViewer> {
     final _appBloc = Provider.of<AppBloc>(context);
     bloc ??= DocumentBloc(_appBloc);
 
-    return StreamBuilder(
-      stream: _appBloc.tool,
-      builder: (_, snapshot) {
-        return Scrollbar(
-          child: SingleChildScrollView(
-            child: AbsorbPointer(
-              absorbing: snapshot.data == null,
-              child: GestureDetector(
-                onPanStart: (details) => bloc.panStart(
-                    details.localPosition.dx, details.localPosition.dy),
-                onPanUpdate: (details) => bloc.panUpdate(
-                    details.localPosition.dx, details.localPosition.dy),
-                child: DualStreamBuilder<Document, Map<String, bool>>(
-                  streamA: bloc.document,
-                  streamB: bloc.backgroundOptions,
-                  initialDataA: Document(),
-                  initialDataB: {"showGrid": false, "showOutline": false},
-                  builder: (context, snapshotA, snapshotB) {
-                    return CustomPaint(
-                      size: Size(5000, 5000),
-                      isComplex: true,
-                      painter: BackgroundPainter(
-                        snapshotA.data,
-                        Theme.of(context).brightness,
-                        snapshotB.data,
-                      ),
-                      foregroundPainter: DocumentPainter(snapshotA.data),
-                    );
-                  },
+    return Listener(
+      onPointerDown: (_) => pointerInput.add(true),
+      onPointerUp: (_) => pointerInput.add(false),
+      child: DualStreamBuilder<bool, Object>(
+        streamA: pointerInput.stream,
+        streamB: _appBloc.tool,
+        initialDataA: false,
+        builder: (_, pointerSnapshot, toolSnapshot) {
+          return Scrollbar(
+            child: SingleChildScrollView(
+              physics: pointerSnapshot.data && toolSnapshot.data != null
+                  ? NeverScrollableScrollPhysics()
+                  : AlwaysScrollableScrollPhysics(),
+              child: AbsorbPointer(
+                absorbing: toolSnapshot.data == null,
+                child: GestureDetector(
+                  onPanStart: (details) => bloc.panStart(
+                      details.localPosition.dx, details.localPosition.dy),
+                  onPanUpdate: (details) => bloc.panUpdate(
+                      details.localPosition.dx, details.localPosition.dy),
+                  child: DualStreamBuilder<Document, Map<String, bool>>(
+                    streamA: bloc.document,
+                    streamB: bloc.backgroundOptions,
+                    initialDataA: Document(),
+                    initialDataB: {
+                      "showGrid": false,
+                      "showOutline": false,
+                    },
+                    builder: (context, documentSnapshot, bgSnapshot) {
+                      return CustomPaint(
+                        size: Size(5000, 5000),
+                        isComplex: true,
+                        painter: BackgroundPainter(
+                          documentSnapshot.data,
+                          Theme.of(context).brightness,
+                          bgSnapshot.data,
+                        ),
+                        foregroundPainter:
+                            DocumentPainter(documentSnapshot.data),
+                      );
+                    },
+                  ),
                 ),
               ),
             ),
-          ),
-        );
-      },
+          );
+        },
+      ),
     );
   }
 }
